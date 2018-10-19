@@ -221,50 +221,99 @@
       //Prepare datasets for bar chart
       function prepareDatasets(){
 
-        //Nest data for getting it as (key=country, isoCode=ISO, amount=total of people, value=other data)
-        var dataMonth = d3.nest()
+  //Nest data for getting it as (key=country, isoCode=ISO, amount=total of people, value=other data)
+        var dataYear = d3.nest()
           .key(function(d){
-            return d.Month;
+            return d.Year;
           })
           .rollup(function(values) { return values.length; })
           .entries(dataOrigin);
 
-        console.log(dataMonth);
+        console.log(dataYear);
         
-        dataMonth.sort(function(x, y){
+        dataYear.sort(function(x, y){
           return d3.ascending(+x.key, +y.key);
         });
+        console.log(dataYear);
 
-        var i;
-        var total=0;
-        for (i = 0; i < dataMonth.length; i++) { 
-          switch(dataMonth[i].key) {
-            case "01":
-            case "02":
-            case "03":
-            case "04":
-            case "05":
-            case "06":
-            case "07":
-            case "08":
-            case "09":
-                dataMonth[i].value=dataMonth[i].value/3;
-                total+=dataMonth[i].value;
-                break;
-            case "10":
-            case "11":
-            case "12":
-                dataMonth[i].value=dataMonth[i].value/2;
-                total+=dataMonth[i].value;
-                break;
-          }
-        }
-        console.log(dataMonth);
-        for (i = 0; i < dataMonth.length; i++) {
-          dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
-        }
-dataMonth1=dataMonth;
-        console.log(dataMonth1);
+        // var i;
+        // var total=0;
+        // for (i = 0; i < dataMonth.length; i++) { 
+        //   switch(dataMonth[i].key) {
+        //     case "01":
+        //     case "02":
+        //     case "03":
+        //     case "04":
+        //     case "05":
+        //     case "06":
+        //     case "07":
+        //     case "08":
+        //     case "09":
+        //         dataMonth[i].value=dataMonth[i].value/3;
+        //         break;
+        //     case "10":
+        //     case "11":
+        //     case "12":
+        //         dataMonth[i].value=dataMonth[i].value/2;
+        //         break;
+        //   }
+        // }
+        // for (i = 0; i < dataMonth.length; i++) { 
+        //   total+=dataMonth[i].value;
+        // }
+        // console.log(dataMonth);
+        // console.log(total);
+        // for (i = 0; i < dataMonth.length; i++) {
+        //   dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
+        // }
+        // dataMonth1=dataMonth;
+        // console.log(dataMonth1);
+        // //Nest data for getting it as (key=country, isoCode=ISO, amount=total of people, value=other data)
+        // var dataMonth = d3.nest()
+        //   .key(function(d){
+        //     return d.Month;
+        //   })
+        //   .rollup(function(values) { return values.length; })
+        //   .entries(dataOrigin);
+
+        // console.log(dataMonth);
+        
+        // dataMonth.sort(function(x, y){
+        //   return d3.ascending(+x.key, +y.key);
+        // });
+
+        // var i;
+        // var total=0;
+        // for (i = 0; i < dataMonth.length; i++) { 
+        //   switch(dataMonth[i].key) {
+        //     case "01":
+        //     case "02":
+        //     case "03":
+        //     case "04":
+        //     case "05":
+        //     case "06":
+        //     case "07":
+        //     case "08":
+        //     case "09":
+        //         dataMonth[i].value=dataMonth[i].value/3;
+        //         break;
+        //     case "10":
+        //     case "11":
+        //     case "12":
+        //         dataMonth[i].value=dataMonth[i].value/2;
+        //         break;
+        //   }
+        // }
+        // for (i = 0; i < dataMonth.length; i++) { 
+        //   total+=dataMonth[i].value;
+        // }
+        // console.log(dataMonth);
+        // console.log(total);
+        // for (i = 0; i < dataMonth.length; i++) {
+        //   dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
+        // }
+        // dataMonth1=dataMonth;
+        // console.log(dataMonth1);
       }
 
        //Add the axis for bar chart
