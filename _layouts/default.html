@@ -83,7 +83,7 @@
 
                 The <b>attributes</b> name, description, audience and zone are categorical. Besides, we won't use them. The attributes number of people present and duration are ordered and quantitative (because of being number quantities) and sequential (there is no separation between two groups so no diverging). We won't use them neither. About the attribute date, we can consider that originally it is ordered and quantitative and sequential because it is composed of a complete date (year, month, day, hours and minutes).<br/><br/>
 
-                After processing the data, we obtain <b>new items</b>: each item is a month (or a year, for the other derivation). About the attribute, we have new attributes: for one derivation the monthRate (the promedian rate (in %) of trainings, for a month, considering the three years) and for the other one the yearRate (the rate (in %) of trainings, for a year). Both monthRate and yearRate are ordered and quantitative and sequential attributes, because of being number quantities (%) with no separation between two groups so no diverging.<br/><br/>
+                After processing the data, we obtain <b>new items</b>: each item is a month - the months represent cyclic data here because we used them over several years and grouped them together - for the years, there are all separated (or a year, for the other derivation). About the attribute, we have new attributes: for one derivation the monthRate (the promedian rate (in %) of trainings, for a month, considering the three years) and for the other one the yearRate (the rate (in %) of trainings, for a year). Both monthRate and yearRate are ordered and quantitative and sequential attributes, because of being number quantities (%) with no separation between two groups so no diverging.<br/><br/>
             </p>
             <p style="color:#789410;font-size:110%">Why ?</p>
             <p style="color:#111111;">
@@ -106,10 +106,15 @@
             </p>
             <p style="color:#789410;font-size:110%">How ?</p>
             <p style="color:#111111;">
-              vvvv
+              We choose <b>line chart</b> for this visualization.<br/><br/>
+              First, we have to say that for the two datasets, in the x axis, we have the considered time (month, or year). Both are ordered and quantitative. Month is cyclic whereas year is sequential. In the y axis we have the rate in % of training by month (promedian rate) or by year. Both are ordered, quantitative and sequential.<br/><br/>
+              As a result, about the visual encoding, the <b>mark</b> we choose is <b>line</b> which represents the rate in % of training over the time (months or years) and the <b>channel</b> is <b>vertical position</b> because the attribute rate is ordered quantitative; it can be easily explain because this channel is the most <b>effective</b> for the ordered attributes (which should always use magnitude channels, in theory, so from this point of view, we use a good and expressive type).</p>
+              Note that we use a second mark which are the <b>points</b>, for each exact value we had, to emphatise them and allow to get more details. 
+              <br/>About the view for secondary task where we used the same marks and channels because the items and the attributes shared the same charactheristics than the one of the first view/main task.
+              </br></br>
+              As in y axis we have the rate of training which is quantitative ordered sequential, in both views, we choose to <b>express</b> the vertical position - it combines well with ordered attributes and with our principal tasks (summarize distribution, locate extremes) and secondary task (identify trends). And as in x axis we have the considered time period which is quantitative ordered, in both views, we choose to <b>express</b> also the position.
               <br/><br/>
-              xxxx
-              <br/><br/>
+              Then about the interaction, first we decide to provide to the user two interactions with two buttons. Both buttons allow to switch between the two views, which permit to perform the main or the secondary tasks (and to get back!). It’s a <b>Change manipulation</b>. Then, we used a <b>Superimpose</b> putting the points we have on the lines. And, to conclude, with these points we also provide a <b>“Select” manipulation</b>, with a mouseover which allows to give more detailed information about the current point.</p>
             </p>            
       </div>
     </div>
