@@ -86,34 +86,22 @@
                 After processing the data, we obtain <b>new items</b>: each item is a month (or a year, for the other derivation). About the attribute, we have new attributes: for one derivation the monthRate (the promedian rate (in %) of trainings, for a month, considering the three years) and for the other one the yearRate (the rate (in %) of trainings, for a year). Both monthRate and yearRate are ordered and quantitative and sequential attributes, because of being number quantities (%) with no separation between two groups so no diverging.<br/><br/>
             </p>
             <p style="color:#789410;font-size:110%">Why ?</p>
-            Before talking about the wanted tasks, we have to mention that we did one derivation task : process the data, transform the items which represented one year into a group of 5 years (and as result, temperature change are now a promedian of the change of the 5 years) so the task, in terms of Tamara was <b>Derive (action) Feature (target)</b>.<br/><br/>
-
-              Which tasks do we want to perform here ? <br/><br/>
-
-              As said in the title, first, the primary task we want to perform here is to show that <b>the global warming is a reality, and in the whole world.</b>
-              In terms of Tamara, at a high-level, the action is <b>Present</b> and the target is <b>Trends</b> : we want to show this reality, that in the last decades the temperature on the planet has increased! To be more precise, at a low-level that the action is <b>Identify</b> and the target is <b>Trends</b>. For this behaviour we can use only the dataset <i>Earth zone: Global</i>.
-              <br/><br/>
-              This is <b>our first insight : the global warming is a reality on the planet.</b>
-              <br/><br/>
-              To complete this approach, for the primary task, we provided one interaction "Switch dataset" which allow to visualize the data for 3 zones of the planet : North, Equator and South. Thanks to these visualisations, we can show that the global warming is a fact on the whole planet. In terms of Tamara, at a high-level, the action is also <b>Present</b> and the target is <b>Trends</b>, and at a low-level that the action is also <b>Identify</b> and the target is <b>Trends</b>.
-              <br/><br/>
-              <b>This is our second insight : the global warming is a reality on all the parts of the planet (North, Equator, South).</b>
-              <br/><br/>
-              One secondary task asked was to show that the global warming is a reality on all continents. Here we would consider that we had a talk with the boss, explaining that with these data, we could not perform this task because there are no data by country o by continent, just with the parallels. No derivations are possible for doing that. That is why we show at least the fact that in each zone (North, South, Equator) the global warming is a reality.
-              <br/><br/>
-
-              Another secondary task here, not required/asked here but meaningful, is to know better about the global warming depending on the zones of the world. We want to know where the global warming has been more important, and where not. In terms of Tamara, at a high-level, this task is <b>Discover (action) Features (target)</b> and at a low-level that the action is <b>Compare</b> and the target is <b>Features</b>. We can perform this task by using the interaction "Switch dataset" and then compare on the y axis the highest level of the scale : just by switching, we can observe than in the North the highest level is about 1.2, whereas in the Equator it is about 0.8 and in the South it is about 0.4, so we have been able to compare this feature (the maximum positive temperature change on each zone), knowing already (from task 1) that all the three have a trend of increase in the last decades.
-              <br/><br/>
-              As a result, <b>our third insight : the global warming, present everywhere on Earth, is even more important in the North of the planet (more than in Equator, where it is more important than in the South).</b>
-              <br/><br/>
-              And another secondary task here, not required/asked here but meaningful, is to search more precisely for each zone, if there are differences between subzones of this one about the global warming. The aim is to be able to determine if the global warming has been more important in some subzones, or not. In terms of Tamara, at a high-level, this task is <b>Discover (action) Features (target)</b> and at a low-level that the action is <b>Compare</b> and the target is <b>Features</b>. We can perform this task by using the interaction "Show dataset details" (<b>details on demand</b>): by clicking you can observe in the same visualization the temperature changes for 2 or 3 subzones of the current one.
-              <br/><br/>
-              As a result, <b>our fourth insight : the global warming, present everywhere on Earth, is even more important in the North of the North of the planet : the North Pole. It is a confirmation of something that the media are also telling. But more surprisingly, in the South of the planet, in the South Pole (the South of the South of the planet), the global warming is not more important (it is less important!) than in the northern parts of the South.</b>
-              <br/><br/>
             <p style="color:#111111;">
-              vvvv
+              Before talking about the wanted tasks, we have to mention that we did two derivation tasks. We process the data and transform the items which were representing one training into new items. Now each item is a month (or a year, for the other dataset where we performed the other derivation). For the items Month the attribute is the promedian rate (in %) of trainings, for a month, considering the three years given in the original data. For the items Year the attribute is the rate (in %) of trainings, for a year. These derivation tasks, in terms of Tamara were <b>Derive (action) Feature (target) (from trainings to temporal data)</b>.<br/><br/>
+
+              Which tasks do we want to be able to perform here ? <br/><br/>
+
+              As said in the title, first, the primary task we want to perform here is <b>to show how much are given these trainings during a year (month by month).</b>
+              In terms of Tamara, at a high-level, the action is <b>Present</b> and the target is <b>Distribution</b> : we want to show to the audience a summary month by month of the rate of trainings which have been given. To be more precise, at a low-level that the action is <b>Summarize</b> and the target is <b>Distribution</b>. For this behaviour we use only the dataset <i>rate under total (in %) by month</i>.
               <br/><br/>
-              xxxx
+              But, also as said in the title, another primary task would be <b>to show when are mostly given these trainings during a year (month by month) and when not.</b>
+              In terms of Tamara, at a high-level, the action is <b>Discover</b> and the target is <b>Extremes</b> : we want to allow the audience to know when they should book time for going to these trainings. To be more precise, at a low-level that the action is <b>Locate</b> and the target is <b>Extremes</b>.
+              They are <b>our two first insights : you should book time for going to these trainings in April or September. But on the contrary we should definitely not plan to assist to this kind of training in January or December.</b> For this behaviour we use only the dataset <i>rate under total (in %) by month</i>.
+              <br/><br/>
+
+              One secondary task is to check if we are "on-time" for these capacitations. By saying that, we mean that, even if this initiative of organising trainings about open data usage is quite recent (since 2016) maybe we have missed the right moment or maybe not! In terms of Tamara, at a high-level, this task is <b>Discover (action) Trends (target)</b> and at a low-level that the action is <b>Identify</b> and the target is <b>Trends</b>. We can perform this task by using the interaction "Switch to year". Then we can perform this task (so using only the dataset <i>rate under total (in %) by year</i>.)
+              <br/><br/>
+              As a result, <b>our third insight : the global trend over years is a huge decrease of the number of training given about this subject. Most of them (almost 60%) have been given in 2016. So it seems that we missed the right moment!</b>
               <br/><br/>
             </p>
             <p style="color:#789410;font-size:110%">How ?</p>
