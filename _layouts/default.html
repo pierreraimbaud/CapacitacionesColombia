@@ -13,62 +13,55 @@
 
     <style>
 
-    .bar {
-      fill: steelblue;
-    }
+      .toolTip {
+        position: absolute;
+        display: none;
+        min-width: 80px;
+        height: auto;
+        background: none repeat scroll 0 0 #ffffff;
+        border: 1px solid #6F257F;
+        padding: 14px;
+        text-align: center;
+      }
 
-    .bar:hover {
-      fill: brown;
-    }
+      h1 {
+        font-size : 150%;
+        color:#696969;
+        text-align: center;
+      }
 
-    .toolTip {
-      position: absolute;
-      display: none;
-      min-width: 80px;
-      height: auto;
-      background: none repeat scroll 0 0 #ffffff;
-      border: 1px solid #6F257F;
-      padding: 14px;
-      text-align: center;
-    }
+      h2 {
+        font-size : 110%;
+        color:#489450;
+      }
 
-    h2 {
-      font-size : 120%;
-      color:#489450;
-    }
+      .xaxis text {
+        color:#676779;
+      }
 
-    h3 {
-      font-size : 180%;
-      color:#696969;
-      text-align: center;
-    }
+      .yaxis text {
+        color:#676779;
+      }
 
-    .xaxis text {
-      color:blue;
-    }
-
-    .yaxis text {
-      color:blue;
-    }
-
-    #svgcontainer {
-    display: inline-block;
-    }
-
-    #explcontainer {
+      #svgcontainer {
         display: inline-block;
-    }
+      }
 
+      #explcontainer {
+        display: inline-block;
+      }
     </style>
     
-    <h3>xxxx</h3>
+    <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given?</h1>
     <div id="wrapper">
 
       <div id = "svgcontainer">
-            <br/>
             <h2>Dataset</h2>
-            <p style="color:#789410;font-size:110%">Data only for xx</p>
-            <button style="padding: 10px 20px; text-align: center;font-size: 16px;margin: 4px 2px;">Switch dataset</button>
+            <div>
+              <p style="color:#789410;font-size:85%">Data are processed to consider the fact that at the moment where we got the data, the months of october, november and december of 2018 are missing. </br>As a result, we normalised the data between the years 2016 and 2017 (complete) and 2018 (uncomplete).</p>
+              <button id = "swToYearButton" style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to year</button>
+              <button id = "swToMonthButton" disabled style="padding: 5px 10px; text-align: center;font-size: 80%;margin: 2px 1px;">Switch to month</button>
+            </div>
       </div>
 
        <div id = "explcontainer">
@@ -81,23 +74,30 @@
               What ?
               <br/><br/>
       </div>
-
     </div>
-    <p style="font-size:90%">The data used come from the Colombian open data website - direct link <a href="https://www.datos.gov.co/api/views/nmxb-8juf/rows.csv?accessType=DOWNLOAD&bom=true&format=true">here</a></p>
-    <p style="font-size:90%">This project is under <a href="https://opensource.org/licenses/MIT">MIT license.</a></p>
+
     <script src="https://d3js.org/d3.v5.min.js"></script>
 
     <script>
 
       // Const margin data for viz
       const width = 850;
-      const height = 500;
+      const height = 450;
       const margin = {top: 5, right: 70, bottom: 50, left: 50};
       const iwidth = width - margin.left -margin.right;
       const iheight = height - margin.top - margin.bottom;
 
-      // Const bar chart
-      const barwidth = 20;
+      // Const ray for line chart
+      const circleRay = 4;
+
+      const timeFormatYear = "%Y";
+      const timeFormatMonth = "%Y-%m";
+
+      const timeMonthLetter = d3.timeFormat("%b");
+      const timeYearLetter =d3.timeFormat(timeFormatYear);
+
+      const parseTimeYear = d3.timeParse(timeFormatYear);
+      const parseTimeMonth = d3.timeParse(timeFormatMonth);
 
       // SVG and g elements
       var svg = d3.select("#svgcontainer")
@@ -111,18 +111,11 @@
       //Tooltip var
       var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-      //Dataset current index
-      var dataIndex=1;
-
-      var datasetsTitles = ["Total of people", "Average age", "Male rate", "Female rate", "No gender registered rate", "PhD level of study rate", "Primary level of study rate", "Children rate", "Adults rate", "Elderly people rate"];
-
-      var maxIndex = datasetsTitles.length;
-
       // Original ata var
       var dataOrigin;
 
-      // Dataset 1,2,3,4,5,6,7,8,9,10
-      var dataMonth1, dataCountryList2, dataCountryList3, dataCountryList4, dataCountryList5, dataCountryList6, dataCountryList7, dataCountryList8, dataCountryList9, dataCountryList10;
+      // Dataset 1,2
+      var dataMonth1, dataYear1;
 
       //Var for axis x and y
       var xDomain, yDomain, xaxis, yaxis, x, y;
@@ -135,233 +128,418 @@
           createBar();
       });
 
-      //button to swap over datasets
-      d3.select("button").on("click",function(){
-          updateBar();
+      //button to swap to the other dataset
+      d3.select("#swToYearButton").on("click",function(){
+          updateLineChartToYear();
       });//end click function
 
-      //Create bar chart
+      //button to swap to the other dataset (get back)
+      d3.select("#swToMonthButton").on("click",function(){
+          updateLineChartToMonth();
+      });//end click function
+
+      //Create chart
       function createBar(){
 
         //Set dataset title
-        d3.select("h2").text("Dataset "+dataIndex + ": by country - " + datasetsTitles[dataIndex-1]);
+        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month (normalised promedian of the 3 years)");
 
         //Data preparation (2 datasets)
         prepareDatasets();        
 
         //Create Axis
-        addAxisForBarChar();
+        addAxisForChart();
 
-        //Create Bar chart (rect)
-       // addBarCharRects();
-      }
-/*
-      //Add the axis for bar chart
-      function addAxisForBarChar(){
+        //Create line chart (line)
+        addLineForMonth();
 
-        // X scale definition
-        x = d3.scaleBand().rangeRound([0, iwidth])
-          .paddingInner(1)
-          .paddingOuter(1);
-
-        x.domain((eval("dataCountryList"+dataIndex)).map(function(d){
-         return d.value.isoCode;}));
-
-        // Y scale definition
-        y = d3.scaleLinear().rangeRound([iheight, 0]);
-
-        y.domain([0, d3.max(eval("dataCountryList"+dataIndex), function(d){
-            return +d.value.amount})]);
-
-        // Axis x
-        xaxis = g.append('g').attr('class', 'xaxis')
-            .call(d3.axisBottom(x))
-            .attr("transform", `translate(0,${iheight})`)
-            .attr("class", "xaxis");
-
-        // Axis y  
-        yaxis = g.append('g').attr('class', 'yaxis')
-            .call(d3.axisLeft(y));
+        //Create points on line chart (circle - superimpose)
+        addPointsForMonth();
       }
 
-      //Add the rect (bar chart)
-      function addBarCharRects(){
-
-        //Add rect
-        var rect = g.selectAll(".bar")
-          .data(eval("dataCountryList"+dataIndex))
-          .enter().append("rect")
-          .attr("class", "bar");
-
-        //Add rect attributes
-        var attrX = rect.attr("x", function (d) {
-              return x(d.value.isoCode)-barwidth/2;
-            })
-
-        var attrY = rect.attr("y", function (d) {
-              return y(d.value.amount);
-            });
-
-        rect.attr("width", barwidth)
-            .attr("height", function (d) {
-              return height - y(d.value.amount)-(margin.top+margin.bottom);
-            });
-
-        //Add rect mouse event
-        rect.on("mousemove", function(d){
-              tooltip
-                .style("left", d3.event.pageX - 70 + "px")
-                .style("top", d3.event.pageY - 90 + "px")
-                .style("display", "inline-block")
-                .html(d.key + ": " +(d.value.amount));
-            })
-            .on("mouseout", function(d){ tooltip.style("display", "none");});   
-      }
-*/
-      //Prepare datasets for bar chart
+      //Prepare datasets for chart
       function prepareDatasets(){
 
-  //Nest data for getting it as (key=country, isoCode=ISO, amount=total of people, value=other data)
+        //Nest data for getting it as wanted
         var dataYear = d3.nest()
           .key(function(d){
             return d.Year;
           })
           .rollup(function(values) { return values.length; })
           .entries(dataOrigin);
-
-        console.log(dataYear);
         
         dataYear.sort(function(x, y){
           return d3.ascending(+x.key, +y.key);
         });
-        console.log(dataYear);
 
-        // var i;
-        // var total=0;
-        // for (i = 0; i < dataMonth.length; i++) { 
-        //   switch(dataMonth[i].key) {
-        //     case "01":
-        //     case "02":
-        //     case "03":
-        //     case "04":
-        //     case "05":
-        //     case "06":
-        //     case "07":
-        //     case "08":
-        //     case "09":
-        //         dataMonth[i].value=dataMonth[i].value/3;
-        //         break;
-        //     case "10":
-        //     case "11":
-        //     case "12":
-        //         dataMonth[i].value=dataMonth[i].value/2;
-        //         break;
-        //   }
-        // }
-        // for (i = 0; i < dataMonth.length; i++) { 
-        //   total+=dataMonth[i].value;
-        // }
-        // console.log(dataMonth);
-        // console.log(total);
-        // for (i = 0; i < dataMonth.length; i++) {
-        //   dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
-        // }
-        // dataMonth1=dataMonth;
-        // console.log(dataMonth1);
-        // //Nest data for getting it as (key=country, isoCode=ISO, amount=total of people, value=other data)
-        // var dataMonth = d3.nest()
-        //   .key(function(d){
-        //     return d.Month;
-        //   })
-        //   .rollup(function(values) { return values.length; })
-        //   .entries(dataOrigin);
+        // Normalise the results because the years 2016 and 2017 are complete whereas that in 2018 we don't have october; november; december
+        var totalYear=0;
+        for (i = 0; i < dataYear.length; i++) { 
+          switch(dataYear[i].key) {
+            case "2016":
+            case "2017":
+                dataYear[i].value=dataYear[i].value/12;
+                break;
+            case "2018":
+                dataYear[i].value=dataYear[i].value/9;
+                break;
+          }
+        }
+        for (i = 0; i < dataYear.length; i++) { 
+          totalYear+=dataYear[i].value;
+        }
+        for (i = 0; i < dataYear.length; i++) {
+          dataYear[i].value=(dataYear[i].value/totalYear*100).toFixed(2);
+        }
 
-        // console.log(dataMonth);
+        dataYear1=dataYear;
+        //format the data for time scale
+        dataYear1.forEach(function(d) {
+          d.key = parseTimeYear(+d.key);
+        });
         
-        // dataMonth.sort(function(x, y){
-        //   return d3.ascending(+x.key, +y.key);
-        // });
+        //Nest data for getting it as wanted
+        var dataMonth = d3.nest()
+          .key(function(d){
+            return +d.Month;
+          })
+          .rollup(function(values) { return values.length; })
+          .entries(dataOrigin);
+        
+        dataMonth.sort(function(x, y){
+          return d3.ascending(+x.key, +y.key);
+        });
 
-        // var i;
-        // var total=0;
-        // for (i = 0; i < dataMonth.length; i++) { 
-        //   switch(dataMonth[i].key) {
-        //     case "01":
-        //     case "02":
-        //     case "03":
-        //     case "04":
-        //     case "05":
-        //     case "06":
-        //     case "07":
-        //     case "08":
-        //     case "09":
-        //         dataMonth[i].value=dataMonth[i].value/3;
-        //         break;
-        //     case "10":
-        //     case "11":
-        //     case "12":
-        //         dataMonth[i].value=dataMonth[i].value/2;
-        //         break;
-        //   }
-        // }
-        // for (i = 0; i < dataMonth.length; i++) { 
-        //   total+=dataMonth[i].value;
-        // }
-        // console.log(dataMonth);
-        // console.log(total);
-        // for (i = 0; i < dataMonth.length; i++) {
-        //   dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
-        // }
-        // dataMonth1=dataMonth;
-        // console.log(dataMonth1);
+        // Normalise the results all the months appear 3 times except october; november; december
+        var total=0;
+        for (i = 0; i < dataMonth.length; i++) { 
+          switch(dataMonth[i].key) {
+            case "01":
+            case "02":
+            case "03":
+            case "04":
+            case "05":
+            case "06":
+            case "07":
+            case "08":
+            case "09":
+                dataMonth[i].value=dataMonth[i].value/3;
+                break;
+            case "10":
+            case "11":
+            case "12":
+                dataMonth[i].value=dataMonth[i].value/2;
+                break;
+          }
+        }
+        for (i = 0; i < dataMonth.length; i++) { 
+          total+=dataMonth[i].value;
+          dataMonth[i].dateFacticeYear = "2010-"+dataMonth[i].key;
+        }
+        for (i = 0; i < dataMonth.length; i++) {
+          dataMonth[i].value=(dataMonth[i].value/total*100).toFixed(2);
+        }
+        dataMonth1=dataMonth;
+        // format the data for time scale
+        dataMonth1.forEach(function(d) {
+          d.dateFacticeYear = parseTimeMonth(d.dateFacticeYear);
+        });
       }
 
-       //Add the axis for bar chart
-      function addAxisForBarChar(){
+       //Add the axis on chart
+      function addAxisForChart(){
 
         // X scale definition
-        // x = d3.scaleBand().rangeRound([0, iwidth])
-        //   .paddingInner(1)
-        //   .paddingOuter(1);
-
-        // x.domain(dataMonth1).map(function(d){
-        //  return +d.key;});
-         x = d3.scaleLinear().rangeRound([iheight, 0]);
-        var max = d3.max(dataMonth1, function(d){
-          return +d.key});
-        x.domain([max,0]);
+        x = d3.scaleTime().range([0, iwidth]);
+        xDomain=d3.extent(dataMonth1, function(d) { return d.dateFacticeYear;});
+        x.domain(xDomain);
 
         // Y scale definition
         y = d3.scaleLinear().rangeRound([iheight, 0]);
         var max = d3.max(dataMonth1, function(d){
           return +d.value});
-        y.domain([0,max]);
+        yDomain=[0,max];
+        y.domain(yDomain);
 
         // Axis x
         xaxis = g.append('g').attr('class', 'xaxis')
-            .call(d3.axisBottom(x))
+            .call(d3.axisBottom(x).ticks(d3.timeMonth, 1)
+              .tickFormat(timeMonthLetter))
             .attr("transform", `translate(0,${iheight})`)
             .attr("class", "xaxis");
 
         // Axis y  
         yaxis = g.append('g').attr('class', 'yaxis')
             .call(d3.axisLeft(y));
-     
+      }
 
- // Add the line which join the points
-            const line = d3.line()
-    .x( d=> x(d.key))
-    .y( d=> y(d.value));
+      //Add the line on chart
+      function addLineForMonth(){
+
+        // Add the line which join the points
+        var line = d3.line()
+          .x( d=> x(d.dateFacticeYear))
+          .y( d=> y(d.value));
           
-          // Path element
-          g.append("path")
-            .attr("class", "line")
-            .attr("d", line(dataMonth1))
-            .style("stroke", "grey")
-            .style("fill", "none");
- }
+        // Path element
+        g.append("path")
+          .attr("class", "line")
+          .attr("d", line(dataMonth1))
+          .style("stroke", "#408000")
+          .attr("stroke-width", 2.5)
+          .style("fill", "none");
+      }
+
+      //Add the points on the line on chart
+      function addPointsForMonth(){
+
+        var circ = svg.selectAll('circle')
+            .data(dataMonth1)
+            .enter()
+            .append('circle')
+            .style("fill", "#6332E2")
+
+        var attrX = 
+          circ.attr("r", circleRay)
+              .attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; })
+              .attr("cy", function(d) { return y(d.value)+circleRay});
+
+        circ.on("mousemove", function(d){
+              tooltip
+                .style("left", d3.event.pageX - 70 + "px")
+                .style("top", d3.event.pageY - 90 + "px")
+                .style("display", "inline-block")
+                .html(timeMonthLetter(d.dateFacticeYear) + " - " + d.value + " %");
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");})
+      }
+
+      //Update the Axis For Year on chart
+      function updateAxisForYear(){
+
+        //Update x and y axis
+
+        //1 - rejoin data
+        xaxis = g.selectAll(".xaxis");
+        
+        //2 - Remove axis
+        xaxis.exit().remove();//remove unneeded axis
+
+        var yaxis = g.selectAll(".yaxis");
+          
+        xaxis.exit().remove();//remove unneeded axis
+
+        //3 - Update axis
+        xaxis.enter().append("xaxis")
+          .attr("class", "xaxis");
+
+        yaxis.enter().append("yaxis")
+          .attr("class", "yaxis");
+
+        // X scale definition
+ 
+        x = d3.scaleTime().range([0, iwidth]);
+        xDomain=d3.extent(dataYear1, function(d) { return d.key; });
+        x.domain(xDomain);
+
+        // Y scale definition
+        y = d3.scaleLinear().rangeRound([iheight, 0]);
+        var max = d3.max(dataYear1, function(d){
+          return +d.value});
+        yDomain=[0,max];
+        y.domain(yDomain);
+
+        // Axis x
+        xaxis = xaxis.attr('class', 'xaxis')
+            .call(d3.axisBottom(x).ticks(d3.timeYear, 1)
+              .tickFormat(timeYearLetter))
+            .attr("transform", `translate(0,${iheight})`)
+            .attr("class", "xaxis");
+
+        // Axis y  
+        yaxis = yaxis.attr('class', 'yaxis')
+            .call(d3.axisLeft(y));
+      }
+
+      //Update the line for year on chart
+      function updateLineForYear(){
+
+        //Update line
+        //1 - rejoin data
+        var line = g.selectAll(".line");        
+        //2 - Remove line
+        line.exit().remove();//remove unneeded lines
+        //3 - Update line
+        line.enter().append("path")
+          .attr("class", "line");
+
+        // Add the line which join the points
+        var linef = d3.line()
+          .x( d=> x(d.key))
+          .y( d=> y(d.value));
+          
+        // Path element
+        line.attr("d", linef(dataYear1))
+          .style("stroke", "#ff6600")
+          .attr("stroke-width", 2.5)
+          .style("fill", "none");
+      }
+
+      //Update the points for year on chart
+      function updatePointsForYear(){
+
+        //Update points
+        //1 - rejoin data
+        var circ = svg.selectAll('circle').data(dataYear1);
+        //2 - Remove points
+        circ.exit().remove();//remove unneeded points
+        //3 - Update points
+        circ.enter().append("circle");
+
+        circ.attr("r", circleRay);
+        circ.attr("cx", function(d) { return x(d.key) + margin.left; });
+        circ.attr("cy", function(d) { return y(d.value)+circleRay});
+        circ.on("mousemove", function(d){
+              tooltip
+                .style("left", d3.event.pageX - 70 + "px")
+                .style("top", d3.event.pageY - 90 + "px")
+                .style("display", "inline-block")
+                .html(timeYearLetter(d.key) + " - " + d.value + " %");
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");})        
+      }
+
+      function updateLineChartToMonth(){
+        updateAxisForMonth();
+        updateLineForMonth();
+        updatePointsForMonth();
+        d3.select("#swToMonthButton").attr("disabled", true);
+        d3.select("#swToYearButton").attr("disabled", null);
+        //Change text  
+        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month");
+      }
+
+      //update the Axis For month on chart
+      function updateAxisForMonth(){
+
+        //Update x and y axis
+
+        //1 - rejoin data
+        xaxis = g.selectAll(".xaxis");
+        
+        //2 - Remove axis
+        xaxis.exit().remove();//remove unneeded axis
+
+        var yaxis = g.selectAll(".yaxis");
+          
+        xaxis.exit().remove();//remove unneeded axis
+
+        //3 - Update axis
+        xaxis.enter().append("xaxis")
+          .attr("class", "xaxis");
+
+        yaxis.enter().append("yaxis")
+          .attr("class", "yaxis");
+
+        // X scale definition
+
+        x = d3.scaleTime().range([0, iwidth]);
+        xDomain=d3.extent(dataMonth1, function(d) { return d.dateFacticeYear; });
+        x.domain(xDomain);
+
+        // Y scale definition
+        y = d3.scaleLinear().rangeRound([iheight, 0]);
+        var max = d3.max(dataMonth1, function(d){
+          return +d.value});
+        yDomain=[0,max];
+        y.domain(yDomain);
+
+        // Axis x
+        xaxis = xaxis.attr('class', 'xaxis')
+            .call(d3.axisBottom(x).ticks(d3.timeMonth, 1)
+              .tickFormat(d3.timeFormat("%b")))
+            .attr("transform", `translate(0,${iheight})`)
+            .attr("class", "xaxis");
+
+        // Axis y  
+        yaxis = yaxis.attr('class', 'yaxis')
+            .call(d3.axisLeft(y));
+      }
+
+      //Update the line for Month on chart
+      function updateLineForMonth(){
+
+        //Update line
+        //1 - rejoin data
+        var line = g.selectAll(".line");        
+        //2 - Remove line
+        line.exit().remove();//remove unneeded lines
+        //3 - Update line
+        line.enter().append("path")
+          .attr("class", "line");
+
+        // Add the line which join the points
+        var linef = d3.line()
+          .x( d=> x(d.dateFacticeYear))
+          .y( d=> y(d.value));
+          
+        // Path element
+        line.attr("d", linef(dataMonth1))
+          .style("stroke", "#408000")
+          .attr("stroke-width", 2.5)
+          .style("fill", "none");
+      }
+
+      //Update the points for year on chart
+      function updatePointsForMonth(){
+
+        //Update points
+        //1 - rejoin data
+        var circ = svg.selectAll('circle').data(dataMonth1);
+        //2 - Remove points
+        circ.exit().remove();//remove unneeded points
+
+        //3 - Update points
+        circ.enter().append("circle");
+
+        circ.attr("r", circleRay);
+        circ.attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; });
+        circ.attr("cy", function(d) { return y(d.value)+circleRay});
+
+        //But as the number of circle is different between the two lines, we only update 3 points
+
+        //Then we have to create the other points
+        var circ = svg.selectAll('circle2')
+          .data(dataMonth1)
+          .enter()
+          .append('circle')
+          .style("fill", "#6332E2");
+        circ.attr("r", circleRay);
+        circ.attr("cx", function(d) { return x(d.dateFacticeYear) + margin.left; });
+        circ.attr("cy", function(d) { return y(d.value)+circleRay});
+        circ.on("mousemove", function(d){
+              tooltip
+                .style("left", d3.event.pageX - 70 + "px")
+                .style("top", d3.event.pageY - 90 + "px")
+                .style("display", "inline-block")
+                .html(timeMonthLetter(d.dateFacticeYear) + " - " + d.value + " %");
+            })
+            .on("mouseout", function(d){ tooltip.style("display", "none");})
+      }
+
+      function updateLineChartToYear(){
+        updateAxisForYear();
+        updateLineForYear();
+        updatePointsForYear();
+        d3.select("#swToYearButton").attr("disabled", true);
+        d3.select("#swToMonthButton").attr("disabled", null);
+        //Change text
+        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by year");
+      }
     </script>
 
+    <p style="font-size:90%">The data used come from the Colombian open data website - direct link <a href="https://www.datos.gov.co/api/views/nmxb-8juf/rows.csv?accessType=DOWNLOAD&bom=true&format=true">here</a></p>
+    <p style="font-size:90%">This project is under <a href="https://opensource.org/licenses/MIT">MIT license.</a></p>
     <div class="wrapper">
       <header>
         <p><a href="">Link of this page - for sharing for example</a></p>
