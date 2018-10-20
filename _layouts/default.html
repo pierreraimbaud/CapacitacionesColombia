@@ -53,7 +53,7 @@
     </style>
     
     <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given?</h1>
-    
+
     <div id="wrapper">
 
       <div id = "svgcontainer">
@@ -72,8 +72,23 @@
               This visualization uses open data from data.gov.com. The aim is to show some interesting insights about this data : this is the principal objective. The other ones are more academic, like use d3 and publish the web page on githubPages. The technologies used are d3 (javascript), HTML, CSS and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code available in github.
               To be more precise about these insights, in the following paragraphs we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : Colombian migration : where do people go more ? And who are they ?
               <br/><br/>
-              What ?
+              xxxx
               <br/><br/>
+            </p>
+            <p style="color:#789410;font-size:110%">Why ?</p>
+            <p style="color:#111111;">
+              vvvv
+              <br/><br/>
+              xxxx
+              <br/><br/>
+            </p>
+            <p style="color:#789410;font-size:110%">How ?</p>
+            <p style="color:#111111;">
+              vvvv
+              <br/><br/>
+              xxxx
+              <br/><br/>
+            </p>            
       </div>
     </div>
 
@@ -87,45 +102,38 @@
       const margin = {top: 5, right: 70, bottom: 50, left: 50};
       const iwidth = width - margin.left -margin.right;
       const iheight = height - margin.top - margin.bottom;
-
       // Const ray for line chart
       const circleRay = 4;
-
+      //Const for date formats
       const timeFormatYear = "%Y";
       const timeFormatMonth = "%Y-%m";
-
       const timeMonthLetter = d3.timeFormat("%b");
       const timeYearLetter =d3.timeFormat(timeFormatYear);
-
+      //Const for date parsing
       const parseTimeYear = d3.timeParse(timeFormatYear);
       const parseTimeMonth = d3.timeParse(timeFormatMonth);
+
+      // Original data var
+      var dataOrigin;
+      // Dataset 1,2
+      var dataMonth1, dataYear1;
+      //Var for axis x and y
+      var xDomain, yDomain, xaxis, yaxis, x, y;
 
       // SVG and g elements
       var svg = d3.select("#svgcontainer")
           .append("svg")
           .attr("width", iwidth + margin.left + margin.right)
           .attr("height", iheight + margin.top + margin.bottom);
-
       var g = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
       //Tooltip var
       var tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-      // Original ata var
-      var dataOrigin;
-
-      // Dataset 1,2
-      var dataMonth1, dataYear1;
-
-      //Var for axis x and y
-      var xDomain, yDomain, xaxis, yaxis, x, y;
-
-      // Load csv with promise
+      // Load csv with promise and then create chart
       d3.csv('https://raw.githubusercontent.com/pierreraimbaud/CapacitacionesColombia/master/Calendario_de_Capacitaciones__Iniciativa_Datos_Abiertos.csv').then(function(data) {
           dataOrigin = data;
-          console.log(dataOrigin);
-          //Create bar chart
+          //Create chart
           createBar();
       });
 
@@ -148,7 +156,7 @@
         //Data preparation (2 datasets)
         prepareDatasets();        
 
-        //Create Axis
+        //Create axis
         addAxisForChart();
 
         //Create line chart (line)
@@ -247,7 +255,9 @@
         });
       }
 
-       //Add the axis on chart
+      //First creation methods
+
+      //Add the axis on chart
       function addAxisForChart(){
 
         // X scale definition
@@ -315,7 +325,9 @@
             .on("mouseout", function(d){ tooltip.style("display", "none");})
       }
 
-      //Update the Axis For Year on chart
+      //Update methods
+
+      //Update the axis for years on chart
       function updateAxisForYear(){
 
         //Update x and y axis
@@ -362,7 +374,7 @@
             .call(d3.axisLeft(y));
       }
 
-      //Update the line for year on chart
+      //Update the line for years on chart
       function updateLineForYear(){
 
         //Update line
@@ -386,7 +398,7 @@
           .style("fill", "none");
       }
 
-      //Update the points for year on chart
+      //Update the points for years on chart
       function updatePointsForYear(){
 
         //Update points
@@ -410,17 +422,18 @@
             .on("mouseout", function(d){ tooltip.style("display", "none");})        
       }
 
-      function updateLineChartToMonth(){
-        updateAxisForMonth();
-        updateLineForMonth();
-        updatePointsForMonth();
-        d3.select("#swToMonthButton").attr("disabled", true);
-        d3.select("#swToYearButton").attr("disabled", null);
-        //Change text  
-        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month");
+      //Update the chart for years      
+      function updateLineChartToYear(){
+        updateAxisForYear();
+        updateLineForYear();
+        updatePointsForYear();
+        d3.select("#swToYearButton").attr("disabled", true);
+        d3.select("#swToMonthButton").attr("disabled", null);
+        //Change text
+        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by year");
       }
 
-      //update the Axis For month on chart
+      //update the axis for months on chart
       function updateAxisForMonth(){
 
         //Update x and y axis
@@ -467,7 +480,7 @@
             .call(d3.axisLeft(y));
       }
 
-      //Update the line for Month on chart
+      //Update the line for months on chart
       function updateLineForMonth(){
 
         //Update line
@@ -491,7 +504,7 @@
           .style("fill", "none");
       }
 
-      //Update the points for year on chart
+      //Update the points for months on chart
       function updatePointsForMonth(){
 
         //Update points
@@ -527,16 +540,18 @@
             })
             .on("mouseout", function(d){ tooltip.style("display", "none");})
       }
-
-      function updateLineChartToYear(){
-        updateAxisForYear();
-        updateLineForYear();
-        updatePointsForYear();
-        d3.select("#swToYearButton").attr("disabled", true);
-        d3.select("#swToMonthButton").attr("disabled", null);
-        //Change text
-        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by year");
+      
+      //Update the chart for months
+      function updateLineChartToMonth(){
+        updateAxisForMonth();
+        updateLineForMonth();
+        updatePointsForMonth();
+        d3.select("#swToMonthButton").attr("disabled", true);
+        d3.select("#swToYearButton").attr("disabled", null);
+        //Change text  
+        d3.select("h2").text("Dataset about capacitation quantity (rate under total, in %) by month");
       }
+
     </script>
 
     
