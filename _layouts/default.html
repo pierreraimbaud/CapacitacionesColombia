@@ -52,7 +52,7 @@
       }
     </style>
     
-    <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given?</h1>
+    <h1>You want to benefit from a training from the Colombian government about Open Data ? </br>But when are these trainings mostly given? When not?</h1>
 
     <div id="wrapper">
 
@@ -67,14 +67,21 @@
 
        <div id = "explcontainer">
             <h2>What, why and how ? Understanding this visualization thanks to abstraction</h2>
-            <p style="color:#789410;font-size:110%">What ?</p>
-            <p style="color:#111111;">
-              This visualization uses open data from data.gov.com. The aim is to show some interesting insights about this data : this is the principal objective. The other ones are more academic, like use d3 and publish the web page on githubPages. The technologies used are d3 (javascript), HTML, CSS and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code available in github.
-              To be more precise about these insights, in the following paragraphs we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : Colombian migration : where do people go more ? And who are they ?
+                        <p style="color:#111111;">
+              This visualization uses data from datos.gov.co The principal objective here is to show or discover some interesting insights about this data, knowing that the principal question here is:<br/><b>Could I know, thanks to the visualization, when should I book my time for applying to a training about open data ? When not? </b>
               <br/><br/>
-              xxxx
+              The other objetives are more academic: to use d3, to publish the web page on GithubPages etc. The technologies used are d3 (javascript), HTML, CSS and git (nodejs for developing with a local server). There is no specific prerequisites for enjoying the visualization neither for using the code, available in github.
               <br/><br/>
-            </p>
+              To be more precise, in the following paragraphs first we will explain what were our data (through data abstraction), why this visualization (through task abstraction) and to conclude the reason of how we choice to present the data (idioms : visual encoding and interaction) ; thanks to that, we have been able to answer to the title question : <i>when should I book my time, when not, for these trainings</i>, which answers are our insights !
+              <br/>
+              <p style="color:#789410;font-size:110%">What ?</p>
+              The dataset type is <b>temporal</b> (initially, we could have thought that it was a table, but the fact is that, originally, almost all the dataset are tables, but, seaching with more precision, we can discover interesting details. For this case, the dataset is temporal because it provides a list of open data usage trainings, characterising them by their name, their objectives, their geografic range AND <b>their date</b> (we could admit that some would say - and they would be right - that this dataset could be used for other purposes which don't need the temporal data, and as a result the dataset would not be temporal). </br>The dataset availability is <b>static</b> because the dataset available on the website is not modified in real-time, so we just download the file from the website and load it on github. As the dataset was quite up-to-date (only missing the last weeks), it is probable that the data could evolve in the original website but here we will use a static data file, the one on github. After that, to separate the dataset in smaller ones, and also to get <b>derived data</b> (rate in % of training by month and by year), we process directly this file in the visualization with d3.<br/><br/>
+
+              Before processing the data in d3, the <b>items</b> represent each one a training, which have the following characteristics: name, description, audience, date, zone, number of people present and duration. These characteristics are the <b>attributes</b>.<br/><br/>
+
+              The <b>attributes</b> name, description, audience and zone are categorical. Besides, we won't use them. The attributes number of people present and duration are ordered and quantitative (because of being number quantities) and sequential (there is no separation between two groups so no diverging). We won't use them neither. About the attribute date, we can consider that originally it is ordered and quantitative and sequential because it is composed of a complete date (year, month, day, hours and minutes).<br/><br/>
+
+              After processing the data, we obtain <b>new items</b>: each item is a month (or a year, for the other derivation). About the attribute, we have new attributes: for one derivation the monthRate (the promedian rate (in %) of trainings, for a month, considering the three years) and for the other one the yearRate (the rate (in %) of trainings, for a year). Both monthRate and yearRate are ordered and quantitative and sequential attributes, because of being number quantities (%) with no separation between two groups so no diverging.<br/><br/>
             <p style="color:#789410;font-size:110%">Why ?</p>
             <p style="color:#111111;">
               vvvv
